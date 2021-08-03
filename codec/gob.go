@@ -21,7 +21,9 @@ func NewGobCodec(conn io.ReadWriteCloser) Codec {
 	return &GobCodec{
 		conn: conn,
 		buf:  buf,
+		//函数返回一个从conn读取数据的*Decoder，如果conn不满足io.ByteReader接口，则会包装r为bufio.Reader。
 		dec:  gob.NewDecoder(conn),
+		//NewEncoder返回一个将编码后数据写入w的*Encoder。
 		end:  gob.NewEncoder(buf),
 	}
 }
@@ -32,6 +34,8 @@ func (g *GobCodec) ReadHeader(header *Header) (err error) {
 }
 
 func (g *GobCodec) ReadBody(body interface{}) (err error) {
+	//Decode从输入流读取下一个之并将该值存入e。如果e是nil，将丢弃该值；
+	// 否则e必须是可接收该值的类型的指针。如果输入结束，方法会返回io.EOF并且不修改e（指向的值）。
 	err = g.dec.Decode(body)
 	return
 }
